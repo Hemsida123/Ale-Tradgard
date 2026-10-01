@@ -1,0 +1,13 @@
+const openButton = document.querySelector('[data-menu-open]');
+const panel = document.querySelector('#site-menu');
+const closeButton = document.querySelector('[data-menu-close]');
+function closeMenu(){panel.hidden=true;document.body.classList.remove('menu-open');openButton.setAttribute('aria-expanded','false');openButton.focus()}
+openButton?.addEventListener('click',()=>{panel.hidden=false;document.body.classList.add('menu-open');openButton.setAttribute('aria-expanded','true');closeButton.focus()});
+closeButton?.addEventListener('click',closeMenu);
+document.addEventListener('keydown',event=>{if(panel&&!panel.hidden){if(event.key==='Escape')closeMenu();if(event.key==='Tab'){const focusable=[...panel.querySelectorAll('a,button,summary')].filter(el=>el.getClientRects().length);const first=focusable[0],last=focusable.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}}}});
+if('IntersectionObserver' in window&&!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('js-reveal');const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target)}}),{threshold:.07});document.querySelectorAll('.reveal').forEach(el=>observer.observe(el))}
+const lightbox=document.querySelector('#image-viewer');
+document.querySelectorAll('[data-zoom]').forEach(button=>button.addEventListener('click',()=>{const img=lightbox.querySelector('img');img.src=button.dataset.zoom;img.alt=button.querySelector('img').alt;lightbox.querySelector('[data-caption]').textContent=img.alt;lightbox.showModal()}));
+lightbox?.querySelector('button').addEventListener('click',()=>lightbox.close());
+lightbox?.addEventListener('click',e=>{if(e.target===lightbox)lightbox.close()});
+document.querySelectorAll('[data-email-form]').forEach(form=>form.addEventListener('submit',event=>{event.preventDefault();if(!form.reportValidity())return;const data=new FormData(form);const subject=form.dataset.subject||'Förfrågan via webbplatsen';const body=`Namn: ${data.get('namn_1646746578279')}\nE-post: ${data.get('e-post_1646746585854')}\n\n${data.get('meddelande_1646746594994')}`;const destination=form.dataset.recipient||'annika@aletradgard.se';const result=form.querySelector('.form-result');result.querySelector('a').href=`mailto:${destination}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;result.hidden=false;result.setAttribute('tabindex','-1');result.focus()}));
